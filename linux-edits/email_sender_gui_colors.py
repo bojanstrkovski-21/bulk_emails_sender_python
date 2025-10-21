@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, scrolledtext, messagebox
+from tkinter import filedialog, scrolledtext, messagebox, ttk
 import openpyxl
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -28,19 +28,34 @@ class EmailSenderGUI:
             'load_sheet_btn_fg_active': '#2d353b',
             'load_sheet_btn_bg_inactive': '#232a2e',
             'load_sheet_btn_fg_inactive': '#56635f',
-            'field_bg': '#9da9a0',
+            'field_bg': '#6a7b85',
             'field_fg': '#232a2e',
-            'status_log_bg': '#9da9a0',
+            'status_log_bg': '#6a7b85',
             'status_log_fg': '#232a2e',
             'titles_fg': '#d699b6',
             'labels_fg': '#d699b6',
             'hover_bg': '#83c092',
             'not_loaded_excel_fg': '#a89e88',
-            'loaded_excel_fg': '#d3c6aa'
+            'loaded_excel_fg': '#d3c6aa',
+            'scrollbar_bg': '#3a515d'
         }
         
         # Set window background color
         self.root.config(bg=self.colors['window_bg'])
+        
+        # Configure scrollbar style - force custom colors
+        style = ttk.Style()
+        style.theme_use('clam')  # Use 'clam' theme which allows better customization
+        style.configure("Vertical.TScrollbar", 
+                       background=self.colors['scrollbar_bg'],
+                       troughcolor=self.colors['window_bg'],
+                       bordercolor=self.colors['window_bg'],
+                       arrowcolor=self.colors['window_fg'],
+                       darkcolor=self.colors['scrollbar_bg'],
+                       lightcolor=self.colors['scrollbar_bg'])
+        style.map("Vertical.TScrollbar",
+                 background=[('active', self.colors['hover_bg']), 
+                           ('!active', self.colors['scrollbar_bg'])])
         
         self.excel_file = None
         self.recipients = []
@@ -126,9 +141,20 @@ class EmailSenderGUI:
         tk.Label(root, text="Email Message (use {name} to insert recipient's name):", 
                 font=("Arial", 10, "bold"), fg=self.colors['titles_fg'], 
                 bg=self.colors['window_bg']).pack(pady=(10, 5))
-        self.message_text = scrolledtext.ScrolledText(root, width=70, height=10,
-                                                     bg=self.colors['field_bg'], fg=self.colors['field_fg'])
-        self.message_text.pack(pady=5)
+        
+        # Create frame for message text with custom scrollbar
+        message_frame = tk.Frame(root, bg=self.colors['window_bg'])
+        message_frame.pack(pady=5)
+        
+        message_scrollbar = ttk.Scrollbar(message_frame, style="Vertical.TScrollbar")
+        message_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        self.message_text = tk.Text(message_frame, width=70, height=10,
+                                   bg=self.colors['field_bg'], fg=self.colors['field_fg'],
+                                   yscrollcommand=message_scrollbar.set, wrap=tk.WORD)
+        self.message_text.pack(side=tk.LEFT)
+        message_scrollbar.config(command=self.message_text.yview)
+        
         self.message_text.insert("1.0", "Dear {name},\n\nYour message here...")
         
         # Send Button
@@ -144,10 +170,20 @@ class EmailSenderGUI:
         # Status Log
         tk.Label(root, text="Status Log:", font=("Arial", 10, "bold"), 
                 fg=self.colors['titles_fg'], bg=self.colors['window_bg']).pack(pady=(10, 5))
-        self.log_text = scrolledtext.ScrolledText(root, width=70, height=12,
-                                                 bg=self.colors['status_log_bg'], 
-                                                 fg=self.colors['status_log_fg'])
-        self.log_text.pack(pady=5)
+        
+        # Create frame for status log with custom scrollbar
+        log_frame = tk.Frame(root, bg=self.colors['window_bg'])
+        log_frame.pack(pady=5)
+        
+        log_scrollbar = ttk.Scrollbar(log_frame, style="Vertical.TScrollbar")
+        log_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        self.log_text = tk.Text(log_frame, width=70, height=12,
+                               bg=self.colors['status_log_bg'], 
+                               fg=self.colors['status_log_fg'],
+                               yscrollcommand=log_scrollbar.set, wrap=tk.WORD)
+        self.log_text.pack(side=tk.LEFT)
+        log_scrollbar.config(command=self.log_text.yview)
         
     def log(self, message):
         self.log_text.insert(tk.END, message + "\n")
