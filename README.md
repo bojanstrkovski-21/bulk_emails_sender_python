@@ -1,8 +1,28 @@
 # bulk_emails_sender_python
 
-## Needed dependencies
+## Needed dependencies Windows
 - python
 - openpyxl
+
+## Needed dependencies linux
+### Arch Linux 
+
+`sudo pacman -S python python-openpyxl tk`
+
+### Debian/Ubuntu
+
+`sudo apt-get install tk8.6 tk8.6-dev`
+
+`sudo pip3 install openpyxl `
+
+### Fedora
+
+`sudo dnf install tk tk-devel`
+
+`sudo dnf install python3-openpyxl`
+
+
+## Gmail Setup for App
 
 1. Set up Gmail App Password (required for security):
 a. Go to your Google Account settings
