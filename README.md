@@ -4,6 +4,10 @@
 - python
 - openpyxl
 
+## For pdf split-rename
+- pytnonMUpdf
+- pillow
+
 ## Needed dependencies linux
 ### Arch Linux 
 
