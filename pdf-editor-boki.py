@@ -10,10 +10,23 @@ class PDFSplitterApp:
         self.root = root
         self.root.title("PDF Splitter & Auto-Renamer")
         self.root.geometry("900x700")
-        
         ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("blue")
-        
+        # Custom color palette
+        self.colors = {
+            'window_bg': '#2d353b',
+            'panel_bg': '#232a2e',
+            'button_bg': '#6b7d4d',  # darker green/gray
+            'button_fg': '#1E293B',
+            'button_hover': '#689974',  # match email sender
+            'label_fg': '#d699b6',
+            'status_fg': '#dbbc7f',
+            'canvas_bg': '#2b2b2b',
+        }
+        self.root.configure(bg=self.colors['window_bg'])
+        # Use a full-window CTkFrame for background
+        self.bg_frame = ctk.CTkFrame(self.root, fg_color=self.colors['window_bg'])
+        self.bg_frame.pack(fill="both", expand=True)
+
         self.pdf_path = None
         self.pdf_doc = None
         self.output_dir = None
@@ -23,40 +36,52 @@ class PDFSplitterApp:
         self.canvas_image = None
         self.page_image = None
         self.scale_factor = 1.0
-        
+
         self.setup_ui()
     
     def setup_ui(self):
         # Top control panel
-        control_frame = ctk.CTkFrame(self.root)
+        control_frame = ctk.CTkFrame(self.bg_frame, fg_color=self.colors['panel_bg'])
         control_frame.pack(pady=10, padx=10, fill="x")
-        
-        self.load_btn = ctk.CTkButton(control_frame, text="Load PDF", command=self.load_pdf)
+
+        self.load_btn = ctk.CTkButton(control_frame, text="Load PDF", command=self.load_pdf,
+                                      fg_color=self.colors['button_bg'],
+                                      text_color=self.colors['button_fg'],
+                                      hover_color=self.colors['button_hover'])
         self.load_btn.pack(side="left", padx=5)
-        
-        self.output_btn = ctk.CTkButton(control_frame, text="Choose Output Folder", 
-                                        command=self.choose_output, state="disabled")
+
+        self.output_btn = ctk.CTkButton(control_frame, text="Choose Output Folder",
+                                        command=self.choose_output, state="disabled",
+                                        fg_color=self.colors['button_bg'],
+                                        text_color=self.colors['button_fg'],
+                                        hover_color=self.colors['button_hover'])
         self.output_btn.pack(side="left", padx=5)
-        
-        self.process_btn = ctk.CTkButton(control_frame, text="Process & Rename", 
-                                         command=self.process_pdf, state="disabled")
+
+        self.process_btn = ctk.CTkButton(control_frame, text="Process & Rename",
+                                         command=self.process_pdf, state="disabled",
+                                         fg_color=self.colors['button_bg'],
+                                         text_color=self.colors['button_fg'],
+                                         hover_color=self.colors['button_hover'])
         self.process_btn.pack(side="left", padx=5)
-        
-        self.clear_btn = ctk.CTkButton(control_frame, text="Clear Rectangle", 
-                                       command=self.clear_rectangle, state="disabled")
+
+        self.clear_btn = ctk.CTkButton(control_frame, text="Clear Rectangle",
+                                       command=self.clear_rectangle, state="disabled",
+                                       fg_color=self.colors['button_bg'],
+                                       text_color=self.colors['button_fg'],
+                                       hover_color=self.colors['button_hover'])
         self.clear_btn.pack(side="left", padx=5)
-        
+
         # Info label
-        self.info_label = ctk.CTkLabel(self.root, text="Load a PDF to begin", 
-                                       font=("Arial", 12))
+        self.info_label = ctk.CTkLabel(self.bg_frame, text="Load a PDF to begin",
+                                       font=("Arial", 12), text_color=self.colors['label_fg'], bg_color=self.colors['window_bg'])
         self.info_label.pack(pady=5)
-        
+
         # Canvas frame
-        canvas_frame = ctk.CTkFrame(self.root)
+        canvas_frame = ctk.CTkFrame(self.bg_frame, fg_color=self.colors['panel_bg'])
         canvas_frame.pack(pady=10, padx=10, fill="both", expand=True)
-        
+
         # Canvas with scrollbars
-        self.canvas = ctk.CTkCanvas(canvas_frame, bg="#2b2b2b", highlightthickness=0)
+        self.canvas = ctk.CTkCanvas(canvas_frame, bg=self.colors['canvas_bg'], highlightthickness=0)
         self.canvas.pack(fill="both", expand=True)
         
         # Bind mouse events
@@ -65,7 +90,8 @@ class PDFSplitterApp:
         self.canvas.bind("<ButtonRelease-1>", self.on_mouse_up)
         
         # Status label
-        self.status_label = ctk.CTkLabel(self.root, text="Ready", font=("Arial", 10))
+        self.status_label = ctk.CTkLabel(self.bg_frame, text="Ready", font=("Arial", 10),
+                         text_color=self.colors['status_fg'], bg_color=self.colors['window_bg'])
         self.status_label.pack(pady=5)
     
     def load_pdf(self):

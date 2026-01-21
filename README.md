@@ -25,6 +25,9 @@
 
 `sudo dnf install python3-openpyxl`
 
+## PDF-editor-boki
+pip install --break-system-packages customtkinter pillow pymupdf
+
 
 ## Gmail Setup for App
 
